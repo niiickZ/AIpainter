@@ -6,8 +6,8 @@ import numpy as np
 
 class Generator:
     def __init__(self):
-        self.img_row = 256
-        self.img_col = 256
+        self.img_row = None
+        self.img_col = None
         self.img_channels = 3
         self.img_shape = (self.img_row, self.img_col, self.img_channels)
 
@@ -60,18 +60,28 @@ class Sketch2BGR(Generator):
         self.generator = self.buildGenerator()
         self.generator.load_weights(modelPath)
 
-    def preWork(self, img):
-        img = cv2.resize(img, (256, 256))
-        img = np.expand_dims(img, 0)
-        img = (img.astype(np.float32) - 127.5) / 127.5
+    def preWork(self, img, blur=False):
+        """预处理图片为适应神经网络的格式"""
+
+        ''' 暂未完成的功能——适应不同大小图片上色'''
+        height, width = img.shape[:2]
+        scale = 512 / max(height, width)
+        img = cv2.resize(img, None, fx=scale, fy=scale)
+
+        height, width = img.shape[:2]
+        height = height - height % 128
+        width = width - width % 128
+        img = cv2.resize(img, (height, width))
+
+        if blur:
+            img = cv2.GaussianBlur(img, ksize=(197, 197), sigmaX=17, sigmaY=17)
+        img = np.expand_dims(img, 0) # (1, height, width, channels)
+        img = (img.astype(np.float32) - 127.5) / 127.5 # 归一化
         return img
 
     def colorizeImage(self, img_sket, img_style):
         img_sket = self.preWork(img_sket)
-
-        img_style = cv2.GaussianBlur(img_style, ksize=(255, 255), sigmaX=18, sigmaY=18)
-        # cv2.imwrite('style.png', img_style) # del
-        img_style = self.preWork(img_style)
+        img_style = self.preWork(img_style, blur=True)
 
         img_bgr = self.generator.predict([img_sket, img_style])[0]
         img_bgr = img_bgr * 127.5 + 127.5

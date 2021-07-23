@@ -3,6 +3,8 @@ from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QImage, QColor
 import cv2
 from Board.ImgProcess import ImgProcess
+import time
+import threading
 
 class DrawingBoard(QLabel, ImgProcess):
     pen = 0
@@ -27,6 +29,7 @@ class DrawingBoard(QLabel, ImgProcess):
 
         self.using = self.pen
 
+        # 信号传递器
         self.paintComplete = None
 
     def mousePressEvent(self, QMouseEvent):
@@ -48,11 +51,30 @@ class DrawingBoard(QLabel, ImgProcess):
             self.update()
 
     def downloadImg(self):
-        img_bottom = self.Qimg2opencv(self.imgLayer)
-        img_top = self.Qimg2opencv(self.paintLayer)
-        img_style = self.coverImg(img_bottom.copy(), img_top.copy())
+        ''' 暂未完成的功能
+        def colorizeThread(img_bottom, img_style):
+            if cond.acquire():
+                self.paintComplete.colorizeSignal.emit(img_bottom, img_style)
+                cond.notify()
+                cond.release()
 
-        # cv2.imwrite('shot.png', img_style) # del
+        def showThread():
+            if cond.acquire():
+                cond.wait()
+                self.paintComplete.showSignal.emit()
+                cond.release()
+        '''
+
+        img_bottom = self.Qimg2opencv(self.imgLayer) # 将QPixmap对象转化为opencv对象
+        img_top = self.Qimg2opencv(self.paintLayer)
+        img_style = self.coverImg(img_bottom.copy(), img_top.copy()) # 画板覆盖在原线稿上
+
+        ''' 暂未完成的功能——AI上色未完成时画板禁用
+        cond = threading.Condition()
+        threading.Thread(target=showThread, daemon=True).start()
+        threading.Thread(target=colorizeThread, args=(img_bottom, img_style), daemon=True).start()
+        '''
+
         self.paintComplete.colorizeSignal.emit(img_bottom, img_style)
         self.paintComplete.showSignal.emit()
 
@@ -69,6 +91,7 @@ class DrawingBoard(QLabel, ImgProcess):
                 return False
             return True
 
+        # 图片适应画板大小
         scale_x = (self.width() - 80) / self.imgLayer.width()
         scale_y = (self.height() - 80) / self.imgLayer.height()
         scale = min(scale_x, scale_y)

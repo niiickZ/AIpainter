@@ -3,6 +3,7 @@ import numpy as np
 
 class ImgProcess:
     def Qimg2opencv(self, pixmap):
+        """将QPixmap对象转换为opencv对象"""
         # 复制的玄学代码
         Qimg = pixmap.toImage()
         temp_shape = (Qimg.height(), Qimg.bytesPerLine() * 8 // Qimg.depth())
@@ -13,6 +14,7 @@ class ImgProcess:
         return result[..., :3]
 
     def coverImg(self, img_bottom, img_top):
+        """将img_top覆盖在img_bottom上"""
         # 创建掩膜
         img_gray = cv2.cvtColor(img_top, cv2.COLOR_BGR2GRAY)
         ret, mask = cv2.threshold(img_gray, 10, 255, cv2.THRESH_BINARY_INV)

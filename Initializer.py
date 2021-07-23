@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QColorDialog, QFileDialog
 from PyQt5.QtGui import QPixmap, QCursor
-from PyQt5.QtCore import Qt, pyqtSignal, QObject
+from PyQt5.QtCore import Qt, pyqtSignal, QObject, QPoint
 import os
 import numpy as np
 import cv2
@@ -8,6 +8,7 @@ from NeuralNet.Generator import Sketch2BGR
 
 class Function:
     def getColor(self, Home):
+        """从调色板获取画笔颜色"""
         col = QColorDialog.getColor()
         if col.isValid():
             Home.colorSelector.setStyleSheet("#colorSelector\n"
@@ -20,6 +21,7 @@ class Function:
             Home.drawingBoard.penCol = col.name()
 
     def uploadImg(self, Home):
+        """上传图片到画板"""
         fpath, _ = QFileDialog.getOpenFileName(
             Home, "选择图片",
             os.path.join(os.path.expanduser('~'), "Desktop"),
@@ -31,6 +33,7 @@ class Function:
         Home.drawingBoard.loadImg(fpath)
         Home.showBoard.loadImg(cv2.imread(fpath, 1))
 
+        # 第一次上传图片后将画笔等按钮激活
         if Home.downloadButton.isEnabled() == False:
             Home.downloadButton.setEnabled(True)
             Home.brush.setEnabled(True)
@@ -40,27 +43,31 @@ class Function:
             self.changeUse(Home, Home.drawingBoard.pen)
 
     def getDiameter(self, Home):
+        """从滑动槽控件diameterSlider获取画笔直径"""
         value = Home.diameterSlider.value()
         Home.diameterLabel.setText("{}".format(value))
         Home.drawingBoard.penDiameter = value
 
     def changeUse(self, Home, flag):
+        """画笔/橡皮转换"""
         Home.drawingBoard.using = flag
 
-        if flag == 0:
-            icon = QPixmap('img/cursor/pen.png')
+        if flag == Home.drawingBoard.pen:
+            icon = QPixmap("img/cursor/pen.png")
         else:
-            icon = QPixmap('img/cursor/eraser.png')
+            icon = QPixmap("img/cursor/eraser.png")
 
         cursor = QCursor(icon, 0, icon.height()) # 参数2,3为光标作用位置
         Home.drawingBoard.setCursor(cursor)
 
     def resetDrawingBoard(self, Home):
+        """删除所有画笔痕迹，重置为原图"""
         Home.drawingBoard.paintLayer.fill(Qt.transparent)
         Home.drawingBoard.update()
         Home.drawingBoard.downloadImg()
 
     def downloadImg(self, Home):
+        """将AI上色后的图片下载到本地"""
         fpath, _ = QFileDialog.getSaveFileName(
             Home, "选择保存目录",
             os.path.join(os.path.expanduser('~'), "Desktop"),
@@ -70,9 +77,11 @@ class Function:
             Home.showBoard.saveImg(fpath)
 
     def colorize(self, img_sket, img_style):
+        """将原图和配色图传递给AI上色"""
         self.img_bgr = self.colorizeAI.colorizeImage(img_sket, img_style)
 
     def sendImg(self, Home):
+        """将AI上色后的图片显示在右侧展示板"""
         Home.showBoard.loadImg(self.img_bgr)
 
 class Signal(QObject):
@@ -86,12 +95,14 @@ class Initializer(Function):
         self.img_bgr = None
 
     def initWidget(self, Home):
+        """初始未上传图片时画笔/橡皮/重置/下载按钮不可用"""
         Home.downloadButton.setDisabled(True)
         Home.brush.setDisabled(True)
         Home.eraser.setDisabled(True)
         Home.resetButton.setDisabled(True)
 
     def eventBond(self, Home):
+        """关联按钮点击事件和涂色事件"""
         Home.colorSelector.clicked.connect(lambda: self.getColor(Home))
         Home.diameterSlider.valueChanged.connect(lambda: self.getDiameter(Home))
 
