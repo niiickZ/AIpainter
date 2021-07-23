@@ -1,7 +1,18 @@
 import cv2
 import numpy as np
+from PyQt5.QtGui import QImage, QPixmap
 
 class ImgProcess:
+    def opencv2Qimg(self, img):
+        """将opencv对象转换为QPixmap对象"""
+        height, width, channel = img.shape
+        bytesPerLine = 3 * width
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        QImg = QImage(img.data, width, height, bytesPerLine, QImage.Format_RGB888)
+        pixmap = QPixmap.fromImage(QImg)
+        return pixmap
+
     def Qimg2opencv(self, pixmap):
         """将QPixmap对象转换为opencv对象"""
         # 复制的玄学代码

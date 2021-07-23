@@ -76,6 +76,9 @@ class Function:
         if fpath != '':
             Home.showBoard.saveImg(fpath)
 
+    def waitMsg(self, Home):
+        Home.showBoard.waiting()
+
     def colorize(self, img_sket, img_style):
         """将原图和配色图传递给AI上色"""
         self.img_bgr = self.colorizeAI.colorizeImage(img_sket, img_style)
@@ -85,6 +88,7 @@ class Function:
         Home.showBoard.loadImg(self.img_bgr)
 
 class Signal(QObject):
+    waitSignal = pyqtSignal()
     colorizeSignal = pyqtSignal(np.ndarray, np.ndarray)
     showSignal = pyqtSignal()
 
@@ -114,5 +118,6 @@ class Initializer(Function):
         Home.downloadButton.clicked.connect(lambda: self.downloadImg(Home))
 
         Home.drawingBoard.paintComplete = Signal()
+        Home.drawingBoard.paintComplete.waitSignal.connect(lambda: self.waitMsg(Home))
         Home.drawingBoard.paintComplete.colorizeSignal.connect(self.colorize)
         Home.drawingBoard.paintComplete.showSignal.connect(lambda: self.sendImg(Home))

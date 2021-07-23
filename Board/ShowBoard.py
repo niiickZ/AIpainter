@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QLabel
-from PyQt5.QtGui import QPixmap, QPainter, QImage
+from PyQt5.QtGui import QPainter
 import cv2
 from Board.ImgProcess import ImgProcess
 
@@ -34,6 +34,19 @@ class ShowBoard(QLabel, ImgProcess):
         painter.drawPixmap(x, y, self.imgLayer)
         painter.end()
 
+    def waiting(self):
+        """等待AI上色时展板模糊效果"""
+        """不知道为啥不起作用，只能先注释掉了"""
+        pass
+        # img = self.Qimg2opencv(self.imgLayer)
+        #
+        # height, width = img.shape[:2]
+        # k_size = int(min(height, width) / 2)
+        # img = cv2.GaussianBlur(img, ksize=(k_size, k_size), sigmaX=15, sigmaY=15)
+        #
+        # self.imgLayer = self.opencv2Qimg(img)
+        # self.update()
+
     def paintEvent(self, QPaintEvent):
         super().paintEvent(QPaintEvent)
 
@@ -41,12 +54,7 @@ class ShowBoard(QLabel, ImgProcess):
             self.revealImg()
 
     def loadImg(self, img):
-        height, width, channel = img.shape
-        bytesPerLine = 3 * width
-        cv2.cvtColor(img, cv2.COLOR_BGR2RGB, img)
-
-        QImg = QImage(img.data, width, height, bytesPerLine, QImage.Format_RGB888)
-        pixmap = QPixmap.fromImage(QImg)
+        pixmap = self.opencv2Qimg(img)
 
         self.imgLayer = pixmap
         self.update()

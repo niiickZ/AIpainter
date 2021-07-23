@@ -1,9 +1,8 @@
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import Qt, QPoint
-from PyQt5.QtGui import QPixmap, QPainter, QPen, QImage, QColor
+from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
 import cv2
 from Board.ImgProcess import ImgProcess
-import time
 import threading
 
 class DrawingBoard(QLabel, ImgProcess):
@@ -74,7 +73,7 @@ class DrawingBoard(QLabel, ImgProcess):
         threading.Thread(target=showThread, daemon=True).start()
         threading.Thread(target=colorizeThread, args=(img_bottom, img_style), daemon=True).start()
         '''
-
+        self.paintComplete.waitSignal.emit()
         self.paintComplete.colorizeSignal.emit(img_bottom, img_style)
         self.paintComplete.showSignal.emit()
 
@@ -144,13 +143,7 @@ class DrawingBoard(QLabel, ImgProcess):
 
     def loadImg(self, fpath):
         img = cv2.imread(fpath, 1)
-
-        height, width, channel = img.shape
-        bytesPerLine = 3 * width
-        cv2.cvtColor(img, cv2.COLOR_BGR2RGB, img)
-
-        QImg = QImage(img.data, width, height, bytesPerLine, QImage.Format_RGB888)
-        pixmap = QPixmap.fromImage(QImg)
+        pixmap = self.opencv2Qimg(img)
 
         self.imgLayer = pixmap
         self.paintLayer = self.paintLayer.scaled(
