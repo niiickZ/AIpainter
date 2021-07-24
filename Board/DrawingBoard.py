@@ -1,9 +1,26 @@
 from PyQt5.QtWidgets import QLabel
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import Qt, QPoint, QThread, QMutex
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
 import cv2
 from Board.ImgProcess import ImgProcess
 import threading
+
+'''暂未完成的功能(1)
+class ColorizeThread(QThread):
+    def __init__(self, colSignal, showSignal, img_sket, img_style):
+        super().__init__()
+        self.mutex = QMutex()
+        self.colSignal = colSignal
+        self.showSignal = showSignal
+        self.img_sket = img_sket
+        self.img_style = img_style
+
+    def run(self):
+        self.mutex.lock()
+        self.colSignal.emit(self.img_sket, self.img_style)
+        self.showSignal.emit()
+        self.mutex.unlock()
+'''
 
 class DrawingBoard(QLabel, ImgProcess):
     pen = 0
@@ -50,29 +67,30 @@ class DrawingBoard(QLabel, ImgProcess):
             self.update()
 
     def downloadImg(self):
-        ''' 暂未完成的功能
-        def colorizeThread(img_bottom, img_style):
-            if cond.acquire():
-                self.paintComplete.colorizeSignal.emit(img_bottom, img_style)
-                cond.notify()
-                cond.release()
+        """获取用户涂色后的图片并传递给上色AI"""
 
-        def showThread():
-            if cond.acquire():
-                cond.wait()
-                self.paintComplete.showSignal.emit()
-                cond.release()
+        ''' 暂未完成的功能(2)
+        def colorizeThread(img_bottom, img_style):
+            self.paintComplete.colorizeSignal.emit(img_bottom, img_style)
+            self.paintComplete.showSignal.emit()
         '''
 
         img_bottom = self.Qimg2opencv(self.imgLayer) # 将QPixmap对象转化为opencv对象
         img_top = self.Qimg2opencv(self.paintLayer)
         img_style = self.coverImg(img_bottom.copy(), img_top.copy()) # 画板覆盖在原线稿上
 
-        ''' 暂未完成的功能——AI上色未完成时画板禁用
-        cond = threading.Condition()
-        threading.Thread(target=showThread, daemon=True).start()
+        ''' 暂未完成的功能(1)——AI上色时左侧画板可继续涂写(QThread)
+        self.colThread = ColorizeThread(
+            self.paintComplete.colorizeSignal,
+            self.paintComplete.showSignal,
+            img_bottom, img_style)
+        self.colThread.start()
+        '''
+
+        ''' 暂未完成的功能(2)——AI上色时左侧画板可继续涂写(threading)
         threading.Thread(target=colorizeThread, args=(img_bottom, img_style), daemon=True).start()
         '''
+
         self.paintComplete.waitSignal.emit()
         self.paintComplete.colorizeSignal.emit(img_bottom, img_style)
         self.paintComplete.showSignal.emit()

@@ -36,7 +36,7 @@ class ShowBoard(QLabel, ImgProcess):
 
     def waiting(self):
         """等待AI上色时展板模糊效果"""
-        """不知道为啥不起作用，只能先注释掉了"""
+        """暂未完成的功能(3)——不知道为啥不起作用，只能先注释掉了"""
         pass
         # img = self.Qimg2opencv(self.imgLayer)
         #
