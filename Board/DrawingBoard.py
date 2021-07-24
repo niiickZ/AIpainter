@@ -164,6 +164,8 @@ class DrawingBoard(QLabel, ImgProcess):
         pixmap = self.opencv2Qimg(img)
 
         self.imgLayer = pixmap
+
+        self.paintLayer.fill(Qt.transparent)
         self.paintLayer = self.paintLayer.scaled(
             self.imgLayer.width(), self.imgLayer.height())
 
