@@ -69,8 +69,13 @@ class Sketch2BGR(Generator):
         img = cv2.resize(img, None, fx=scale, fy=scale)
 
         height, width = img.shape[:2]
-        height = height - height % 128
-        width = width - width % 128
+
+        # 调整长宽为128最近的倍数
+        tmp = height % 128
+        height = height - (tmp if tmp <= 64 else tmp-128)
+        tmp = width % 128
+        width = width - (tmp if tmp <= 64 else tmp-128)
+
         img = cv2.resize(img, (height, width))
 
         if blur:
