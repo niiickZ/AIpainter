@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QColorDialog, QFileDialog
-from PyQt5.QtGui import QPixmap, QCursor
+from PyQt5.QtGui import QPixmap, QCursor, QColor
 from PyQt5.QtCore import Qt, pyqtSignal, QObject, QPoint
 import os
 import numpy as np
@@ -9,7 +9,7 @@ from NeuralNet.Generator import Sketch2BGR
 class Function:
     def getColor(self, Home):
         """从调色板获取画笔颜色"""
-        col = QColorDialog.getColor()
+        col = QColorDialog.getColor(QColor(Home.drawingBoard.penCol))
         if col.isValid():
             Home.colorSelector.setStyleSheet("#colorSelector\n"
                 "{\n"
@@ -19,6 +19,7 @@ class Function:
                 "}" % col.name())
 
             Home.drawingBoard.penCol = col.name()
+            self.changeUse(Home, Home.drawingBoard.pen)
 
     def uploadImg(self, Home):
         """上传图片到画板"""
@@ -30,8 +31,10 @@ class Function:
         if fpath == '':
             return
 
-        Home.drawingBoard.loadImg(fpath)
-        Home.showBoard.loadImg(cv2.imread(fpath, 1))
+        # 避免路径中包含中文时报错
+        img = cv2.imdecode(np.fromfile(fpath, dtype=np.uint8), 1)
+        Home.drawingBoard.loadImg(img)
+        Home.showBoard.loadImg(img)
 
         # 第一次上传图片后将画笔等按钮激活
         if Home.downloadButton.isEnabled() == False:

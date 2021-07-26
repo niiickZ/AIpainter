@@ -65,7 +65,7 @@ class Sketch2BGR(Generator):
 
         ''' 暂未完成的功能——适应不同大小图片上色'''
         height, width = img.shape[:2]
-        scale = 256 / max(height, width)
+        scale = 512 / max(height, width)
         img = cv2.resize(img, None, fx=scale, fy=scale)
 
         height, width = img.shape[:2]
@@ -76,10 +76,10 @@ class Sketch2BGR(Generator):
         tmp = width % 128
         width = width - (tmp if tmp <= 64 else tmp-128)
 
-        img = cv2.resize(img, (height, width))
+        img = cv2.resize(img, (width, height))
 
         if blur:
-            img = cv2.GaussianBlur(img, ksize=(113, 113), sigmaX=15, sigmaY=15)
+            img = cv2.GaussianBlur(img, ksize=(133, 133), sigmaX=16, sigmaY=16)
         img = np.expand_dims(img, 0) # (1, height, width, channels)
         img = (img.astype(np.float32) - 127.5) / 127.5 # 归一化
         return img

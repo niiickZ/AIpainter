@@ -159,8 +159,7 @@ class DrawingBoard(QLabel, ImgProcess):
         if self.imgLayer != None:
             self.revealImg()
 
-    def loadImg(self, fpath):
-        img = cv2.imread(fpath, 1)
+    def loadImg(self, img):
         pixmap = self.opencv2Qimg(img)
 
         self.imgLayer = pixmap
