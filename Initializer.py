@@ -82,9 +82,9 @@ class Function:
     def waitMsg(self, Home):
         Home.showBoard.waiting()
 
-    def colorize(self, img_sket, img_style):
+    def colorize(self, img_sket, img_style, img_org):
         """将原图和配色图传递给AI上色"""
-        self.img_bgr = self.colorizeAI.colorizeImage(img_sket, img_style)
+        self.img_bgr = self.colorizeAI.colorizeImage(img_sket, img_style, img_org)
 
     def sendImg(self, Home):
         """将AI上色后的图片显示在右侧展示板"""
@@ -92,7 +92,7 @@ class Function:
 
 class Signal(QObject):
     waitSignal = pyqtSignal()
-    colorizeSignal = pyqtSignal(np.ndarray, np.ndarray)
+    colorizeSignal = pyqtSignal(np.ndarray, np.ndarray, np.ndarray)
     showSignal = pyqtSignal()
 
 class Initializer(Function):

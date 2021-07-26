@@ -92,7 +92,7 @@ class DrawingBoard(QLabel, ImgProcess):
         '''
 
         self.paintComplete.waitSignal.emit()
-        self.paintComplete.colorizeSignal.emit(img_bottom, img_style)
+        self.paintComplete.colorizeSignal.emit(img_bottom, img_style, self.orgImg)
         self.paintComplete.showSignal.emit()
 
     def revealImg(self):
@@ -160,6 +160,7 @@ class DrawingBoard(QLabel, ImgProcess):
             self.revealImg()
 
     def loadImg(self, img):
+        self.orgImg = img
         pixmap = self.opencv2Qimg(img)
 
         self.imgLayer = pixmap

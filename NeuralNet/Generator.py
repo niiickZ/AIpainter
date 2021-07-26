@@ -60,13 +60,17 @@ class Sketch2BGR(Generator):
         self.generator = self.buildGenerator()
         self.generator.load_weights(modelPath)
 
-    def preWork(self, img, blur=False):
+    def preWork(self, img, orgShape, blur=False):
         """预处理图片为适应神经网络的格式"""
 
         ''' 暂未完成的功能——适应不同大小图片上色'''
-        height, width = img.shape[:2]
-        scale = 512 / max(height, width)
-        img = cv2.resize(img, None, fx=scale, fy=scale)
+        if 512 / max(orgShape[:2]) <= 1.2:
+            height, width = img.shape[:2]
+            scale = 512 / max(height, width)
+            img = cv2.resize(img, None, fx=scale, fy=scale)
+        else:
+            # 图片放大倍数过多可能失真进而使上色效果下降
+            img = cv2.resize(img, (orgShape[1], orgShape[0]))
 
         height, width = img.shape[:2]
 
@@ -84,9 +88,10 @@ class Sketch2BGR(Generator):
         img = (img.astype(np.float32) - 127.5) / 127.5 # 归一化
         return img
 
-    def colorizeImage(self, img_sket, img_style):
-        img_sket = self.preWork(img_sket)
-        img_style = self.preWork(img_style, blur=True)
+    def colorizeImage(self, img_sket, img_style, orgImg):
+        orgShape = orgImg.shape
+        img_sket = self.preWork(img_sket, orgShape)
+        img_style = self.preWork(img_style, orgShape, blur=True)
 
         img_bgr = self.generator.predict([img_sket, img_style])[0]
         img_bgr = img_bgr * 127.5 + 127.5
