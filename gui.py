@@ -234,6 +234,7 @@ class Ui_Home(object):
         self.brush = QtWidgets.QPushButton(self.toolFrame)
         self.brush.setMinimumSize(QtCore.QSize(48, 48))
         self.brush.setMaximumSize(QtCore.QSize(52, 52))
+        self.brush.setToolTipDuration(3000)
         self.brush.setStyleSheet("#brush\n"
 "{\n"
 "    border: 2px solid black;\n"
@@ -260,7 +261,7 @@ class Ui_Home(object):
         self.horizontalLayout_5.addItem(spacerItem13)
         self.gridLayout.addLayout(self.horizontalLayout_5, 6, 0, 1, 2)
         spacerItem14 = QtWidgets.QSpacerItem(20, 15, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        self.gridLayout.addItem(spacerItem14, 7, 0, 1, 1)
+        self.gridLayout.addItem(spacerItem14, 7, 0, 1, 2)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         spacerItem15 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -268,6 +269,7 @@ class Ui_Home(object):
         self.eraser = QtWidgets.QPushButton(self.toolFrame)
         self.eraser.setMinimumSize(QtCore.QSize(48, 48))
         self.eraser.setMaximumSize(QtCore.QSize(52, 52))
+        self.eraser.setToolTipDuration(3000)
         self.eraser.setStyleSheet("#eraser\n"
 "{\n"
 "    border: 2px solid black;\n"
@@ -302,6 +304,7 @@ class Ui_Home(object):
         self.resetButton = QtWidgets.QPushButton(self.toolFrame)
         self.resetButton.setMinimumSize(QtCore.QSize(48, 48))
         self.resetButton.setMaximumSize(QtCore.QSize(52, 52))
+        self.resetButton.setToolTipDuration(3000)
         self.resetButton.setStyleSheet("#resetButton\n"
 "{\n"
 "    border: 2px solid black;\n"
@@ -327,13 +330,48 @@ class Ui_Home(object):
         spacerItem19 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem19)
         self.gridLayout.addLayout(self.horizontalLayout_3, 10, 0, 1, 2)
+        spacerItem20 = QtWidgets.QSpacerItem(20, 15, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.gridLayout.addItem(spacerItem20, 11, 0, 1, 2)
+        self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
+        spacerItem21 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem21)
+        self.undoButton = QtWidgets.QPushButton(self.toolFrame)
+        self.undoButton.setMinimumSize(QtCore.QSize(48, 48))
+        self.undoButton.setMaximumSize(QtCore.QSize(52, 52))
+        self.undoButton.setToolTipDuration(3000)
+        self.undoButton.setStyleSheet("#undoButton\n"
+"{\n"
+"    border: 2px solid black;\n"
+"    border-radius: 8px;\n"
+"    background-image: url(img/icon/undo.png);\n"
+"    background-color: #E8E8E8;\n"
+"}\n"
+"\n"
+"#undoButton:hover\n"
+"{\n"
+"    background-color: #CDC9C9;\n"
+"}\n"
+"\n"
+"#undoButton:pressed\n"
+"{ \n"
+"    border-style: inset; \n"
+"    border-width: 3px;\n"
+"    /*background-color: #8B8989;*/\n"
+"}")
+        self.undoButton.setText("")
+        self.undoButton.setObjectName("undoButton")
+        self.horizontalLayout_9.addWidget(self.undoButton)
+        spacerItem22 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem22)
+        self.gridLayout.addLayout(self.horizontalLayout_9, 12, 0, 1, 2)
         self.placeHolderBottom = QtWidgets.QFrame(self.toolFrame)
-        self.placeHolderBottom.setMinimumSize(QtCore.QSize(48, 35))
-        self.placeHolderBottom.setMaximumSize(QtCore.QSize(16777215, 390))
+        self.placeHolderBottom.setMinimumSize(QtCore.QSize(48, 50))
+        self.placeHolderBottom.setMaximumSize(QtCore.QSize(16777215, 330))
         self.placeHolderBottom.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.placeHolderBottom.setFrameShadow(QtWidgets.QFrame.Raised)
         self.placeHolderBottom.setObjectName("placeHolderBottom")
-        self.gridLayout.addWidget(self.placeHolderBottom, 11, 0, 1, 2)
+        self.gridLayout.addWidget(self.placeHolderBottom, 13, 0, 1, 2)
         self.gridLayout_2.addWidget(self.toolFrame, 0, 0, 1, 1)
 
         self.retranslateUi(Home)
@@ -345,3 +383,7 @@ class Ui_Home(object):
         self.downloadButton.setText(_translate("Home", "保存图片"))
         self.uploadButton.setText(_translate("Home", "上传线稿"))
         self.diameterLabel.setText(_translate("Home", "15"))
+        self.brush.setToolTip(_translate("Home", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">画笔</span></p></body></html>"))
+        self.eraser.setToolTip(_translate("Home", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">橡皮擦</span></p></body></html>"))
+        self.resetButton.setToolTip(_translate("Home", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">重置</span></p></body></html>"))
+        self.undoButton.setToolTip(_translate("Home", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">撤销</span></p></body></html>"))

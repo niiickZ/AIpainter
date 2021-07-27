@@ -568,6 +568,12 @@ border-right: 3px solid qlineargradient(x0:0, x1:1,stop:  0 white, stop: 1 #ecec
             <height>52</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;画笔&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="toolTipDuration">
+           <number>3000</number>
+          </property>
           <property name="styleSheet">
            <string notr="true">#brush
 {
@@ -609,7 +615,7 @@ border-right: 3px solid qlineargradient(x0:0, x1:1,stop:  0 white, stop: 1 #ecec
         </item>
        </layout>
       </item>
-      <item row="7" column="0">
+      <item row="7" column="0" colspan="2">
        <spacer name="verticalSpacer_2">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -653,6 +659,12 @@ border-right: 3px solid qlineargradient(x0:0, x1:1,stop:  0 white, stop: 1 #ecec
             <width>52</width>
             <height>52</height>
            </size>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;橡皮擦&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="toolTipDuration">
+           <number>3000</number>
           </property>
           <property name="styleSheet">
            <string notr="true">#eraser
@@ -740,6 +752,12 @@ border-right: 3px solid qlineargradient(x0:0, x1:1,stop:  0 white, stop: 1 #ecec
             <height>52</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;重置&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="toolTipDuration">
+           <number>3000</number>
+          </property>
           <property name="styleSheet">
            <string notr="true">#resetButton
 {
@@ -782,17 +800,109 @@ border-right: 3px solid qlineargradient(x0:0, x1:1,stop:  0 white, stop: 1 #ecec
        </layout>
       </item>
       <item row="11" column="0" colspan="2">
+       <spacer name="verticalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>15</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="12" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_9">
+        <item>
+         <spacer name="horizontalSpacer_17">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="undoButton">
+          <property name="minimumSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>52</width>
+            <height>52</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;撤销&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="toolTipDuration">
+           <number>3000</number>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">#undoButton
+{
+	border: 2px solid black;
+	border-radius: 8px;
+	background-image: url(img/icon/undo.png);
+	background-color: #E8E8E8;
+}
+
+#undoButton:hover
+{
+	background-color: #CDC9C9;
+}
+
+#undoButton:pressed
+{ 
+	border-style: inset; 
+	border-width: 3px;
+	/*background-color: #8B8989;*/
+}</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_18">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="13" column="0" colspan="2">
        <widget class="QFrame" name="placeHolderBottom">
         <property name="minimumSize">
          <size>
           <width>48</width>
-          <height>35</height>
+          <height>50</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>390</height>
+          <height>330</height>
          </size>
         </property>
         <property name="frameShape">

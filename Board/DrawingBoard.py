@@ -36,6 +36,7 @@ class DrawingBoard(QLabel, ImgProcess):
         self.imgLayer = None # 线稿图层，用于显示原线稿(QPixmap对象)
         self.paintLayer = QPixmap(200, 200) # 画板图层，用于交互涂色
         self.paintLayer.fill(Qt.transparent)
+        self.paintLog = [] #画板图层历史
 
         self.imgLoc = (0, 0) # 图层的左上角坐标
 
@@ -60,6 +61,7 @@ class DrawingBoard(QLabel, ImgProcess):
             # 获取涂色后的线稿
             if self.imgLayer != None:
                 self.downloadImg()
+                self.paintLog.append(self.paintLayer.copy())
 
     def mouseMoveEvent(self, QMouseEvent):
         if self.leftMousePress:
@@ -127,12 +129,9 @@ class DrawingBoard(QLabel, ImgProcess):
         qp.begin(self.paintLayer)
 
         # 设置画笔
-        if self.using == self.pen:
-            col = QColor(self.penCol)
-        elif self.using == self.eraser:
-            col = QColor(Qt.white)
-        pen = QPen(col, self.penDiameter, Qt.SolidLine)
-        qp.setPen(pen)
+        col = QColor(self.penCol) if self.using == self.pen else QColor(Qt.white)
+        qpen = QPen(col, self.penDiameter, Qt.SolidLine)
+        qp.setPen(qpen)
 
         # 沿轨迹涂色
         if self.startPos != self.endPos and checkPos(self.startPos) and checkPos(self.endPos):
@@ -168,5 +167,8 @@ class DrawingBoard(QLabel, ImgProcess):
         self.paintLayer.fill(Qt.transparent)
         self.paintLayer = self.paintLayer.scaled(
             self.imgLayer.width(), self.imgLayer.height())
+
+        self.paintLog.clear()
+        self.paintLog.append(self.paintLayer.copy())
 
         self.update()

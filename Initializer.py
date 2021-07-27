@@ -42,6 +42,9 @@ class Function:
             Home.brush.setEnabled(True)
             Home.eraser.setEnabled(True)
             Home.resetButton.setEnabled(True)
+            Home.undoButton.setEnabled(True)
+            Home.colorSelector.setEnabled(True)
+            Home.diameterSlider.setEnabled(True)
 
             self.changeUse(Home, Home.drawingBoard.pen)
 
@@ -66,6 +69,21 @@ class Function:
     def resetDrawingBoard(self, Home):
         """删除所有画笔痕迹，重置为原图"""
         Home.drawingBoard.paintLayer.fill(Qt.transparent)
+        Home.drawingBoard.update()
+        Home.drawingBoard.downloadImg()
+        del(Home.drawingBoard.paintLog[1:])
+
+    def undo(self, Home):
+        """撤销上一次操作"""
+        if len(Home.drawingBoard.paintLog) <= 1:
+            return
+
+        if len(Home.drawingBoard.paintLog) == 2:
+            Home.drawingBoard.paintLayer.fill(Qt.transparent)
+        else:
+            Home.drawingBoard.paintLayer = Home.drawingBoard.paintLog[-2].copy()
+
+        del(Home.drawingBoard.paintLog[-1])
         Home.drawingBoard.update()
         Home.drawingBoard.downloadImg()
 
@@ -107,6 +125,9 @@ class Initializer(Function):
         Home.brush.setDisabled(True)
         Home.eraser.setDisabled(True)
         Home.resetButton.setDisabled(True)
+        Home.undoButton.setDisabled(True)
+        Home.colorSelector.setDisabled(True)
+        Home.diameterSlider.setDisabled(True)
 
     def eventBond(self, Home):
         """关联按钮点击事件和涂色事件"""
@@ -116,6 +137,7 @@ class Initializer(Function):
         Home.brush.clicked.connect(lambda: self.changeUse(Home, Home.drawingBoard.pen))
         Home.eraser.clicked.connect(lambda: self.changeUse(Home, Home.drawingBoard.eraser))
         Home.resetButton.clicked.connect(lambda: self.resetDrawingBoard(Home))
+        Home.undoButton.clicked.connect(lambda: self.undo(Home))
 
         Home.uploadButton.clicked.connect(lambda: self.uploadImg(Home))
         Home.downloadButton.clicked.connect(lambda: self.downloadImg(Home))
