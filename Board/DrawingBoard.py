@@ -6,18 +6,16 @@ import threading
 
 '''暂未完成的功能(1)
 class ColorizeThread(QThread):
-    def __init__(self, colSignal, showSignal, img_sket, img_style):
+    def __init__(self, colSignal, img_sket, img_style):
         super().__init__()
         self.mutex = QMutex()
         self.colSignal = colSignal
-        self.showSignal = showSignal
         self.img_sket = img_sket
         self.img_style = img_style
 
     def run(self):
         self.mutex.lock()
         self.colSignal.emit(self.img_sket, self.img_style)
-        self.showSignal.emit()
         self.mutex.unlock()
 '''
 
@@ -59,7 +57,7 @@ class DrawingBoard(QLabel, ImgProcessor):
             self.leftMousePress = False
             # 获取涂色后的线稿
             if self.imgLayer != None:
-                self.downloadImg()
+                self.getColorScheme()
                 self.paintLog.append(self.paintLayer.copy())
 
     def mouseMoveEvent(self, QMouseEvent):
@@ -67,13 +65,12 @@ class DrawingBoard(QLabel, ImgProcessor):
             self.endPos = QMouseEvent.pos()
             self.update()
 
-    def downloadImg(self):
+    def getColorScheme(self):
         """获取用户涂色后的图片并传递给上色AI"""
 
         ''' 暂未完成的功能(2)
         def colorizeThread(img_bottom, img_style):
             self.paintComplete.colorizeSignal.emit(img_bottom, img_style)
-            self.paintComplete.showSignal.emit()
         '''
 
         img_bottom = self.Qimg2opencv(self.imgLayer) # 将QPixmap对象转化为opencv对象
@@ -83,7 +80,6 @@ class DrawingBoard(QLabel, ImgProcessor):
         ''' 暂未完成的功能(1)——AI上色时左侧画板可继续涂写(QThread)
         self.colThread = ColorizeThread(
             self.paintComplete.colorizeSignal,
-            self.paintComplete.showSignal,
             img_bottom, img_style)
         self.colThread.start()
         '''
@@ -94,7 +90,6 @@ class DrawingBoard(QLabel, ImgProcessor):
 
         self.paintComplete.waitSignal.emit()
         self.paintComplete.colorizeSignal.emit(img_bottom, img_style, self.orgImg)
-        self.paintComplete.showSignal.emit()
 
     def revealImg(self):
         def checkPos(pos):

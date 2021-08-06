@@ -8,8 +8,7 @@ class MyWindow(QWidget, Ui_Home, Initializer):
         super().__init__()
         Initializer.__init__(self)
         self.setupUi(self)
-        self.initWidget(self)
-        self.eventBond(self)
+        self.initialize(self)
 
 def main():
     app = QApplication(sys.argv)
