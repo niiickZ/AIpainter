@@ -64,8 +64,8 @@ class ShowBoard(QLabel, ImgProcessor):
             self.revealImg()
 
     def loadImg(self, img):
-        self.orgImg = img
-        self.orgPixmap = self.opencv2Qimg(img)
+        self.orgImg = img.copy()
+        self.orgPixmap = self.opencv2Qimg(img.copy())
 
         self.imgLayer = self.orgPixmap.copy()
 

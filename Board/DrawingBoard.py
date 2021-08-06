@@ -92,7 +92,7 @@ class DrawingBoard(QLabel, ImgProcessor):
         '''
 
         self.paintComplete.waitSignal.emit()
-        self.paintComplete.colorizeSignal.emit(img_bottom, img_style, self.orgImg)
+        self.paintComplete.colorizeSignal.emit(img_bottom, img_style, self.orgImg.copy())
 
     def resizeImg(self):
         if self.imgLayer == None:
@@ -165,8 +165,8 @@ class DrawingBoard(QLabel, ImgProcessor):
             self.revealImg()
 
     def loadImg(self, img):
-        self.orgImg = img
-        self.orgPixmap = self.opencv2Qimg(img)
+        self.orgImg = img.copy()
+        self.orgPixmap = self.opencv2Qimg(img.copy())
 
         self.imgLayer = self.orgPixmap.copy()
 
