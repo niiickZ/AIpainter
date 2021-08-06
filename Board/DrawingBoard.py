@@ -65,6 +65,9 @@ class DrawingBoard(QLabel, ImgProcessor):
             self.endPos = QMouseEvent.pos()
             self.update()
 
+    def resizeEvent(self, QResizeEvent):
+        self.resizeImg()
+
     def getColorScheme(self):
         """获取用户涂色后的图片并传递给上色AI"""
 
@@ -91,21 +94,11 @@ class DrawingBoard(QLabel, ImgProcessor):
         self.paintComplete.waitSignal.emit()
         self.paintComplete.colorizeSignal.emit(img_bottom, img_style, self.orgImg)
 
-    def revealImg(self):
-        def checkPos(pos):
-            '''检查画笔坐标是否越界'''
-            if pos.x() < self.imgLoc[0]:
-                return False
-            if pos.x() > self.imgLoc[0] + self.paintLayer.width():
-                return False
-            if pos.y() < self.imgLoc[1]:
-                return False
-            if pos.y() > self.imgLoc[1] + self.paintLayer.height():
-                return False
-            return True
+    def resizeImg(self):
+        if self.imgLayer == None:
+            return
 
-        # 图片适应画板大小
-        self.imgLayer = self.opencv2Qimg(self.orgImg)
+        self.imgLayer = self.orgPixmap.copy()
         self.paintLayer = self.paintLayer.scaled(
             self.imgLayer.width(), self.imgLayer.height())
 
@@ -121,6 +114,21 @@ class DrawingBoard(QLabel, ImgProcessor):
         x = int((self.width() - self.imgLayer.width()) / 2)
         y = int((self.height() - self.imgLayer.height()) / 2)
         self.imgLoc = (x, y)
+
+        self.update()
+
+    def revealImg(self):
+        def checkPos(pos):
+            '''检查画笔坐标是否越界'''
+            if pos.x() < self.imgLoc[0]:
+                return False
+            if pos.x() > self.imgLoc[0] + self.paintLayer.width():
+                return False
+            if pos.y() < self.imgLoc[1]:
+                return False
+            if pos.y() > self.imgLoc[1] + self.paintLayer.height():
+                return False
+            return True
 
         '''在画板图层涂色'''
         qp = QPainter(self.paintLayer)
@@ -158,9 +166,9 @@ class DrawingBoard(QLabel, ImgProcessor):
 
     def loadImg(self, img):
         self.orgImg = img
-        pixmap = self.opencv2Qimg(img)
+        self.orgPixmap = self.opencv2Qimg(img)
 
-        self.imgLayer = pixmap
+        self.imgLayer = self.orgPixmap.copy()
 
         self.paintLayer.fill(Qt.transparent)
         self.paintLayer = self.paintLayer.scaled(
@@ -169,4 +177,5 @@ class DrawingBoard(QLabel, ImgProcessor):
         self.paintLog.clear()
         self.paintLog.append(self.paintLayer.copy())
 
+        self.resizeImg()
         self.update()

@@ -10,12 +10,19 @@ class ShowBoard(QLabel, ImgProcessor):
         self.imgLayer = None
         self.imgLoc = (0, 0)
 
+    def resizeEvent(self, QResizeEvent):
+        self.resizeImg()
+
     def saveImg(self, fpath):
         img = self.Qimg2opencv(self.imgLayer)
         cv2.imwrite(fpath, img)
 
-    def revealImg(self):
-        self.imgLayer = self.opencv2Qimg(self.orgImg)
+    def resizeImg(self):
+        if self.imgLayer == None:
+            return
+
+        self.imgLayer = self.orgPixmap.copy()
+
         scale_x = (self.width() - 80) / self.imgLayer.width()
         scale_y = (self.height() - 80) / self.imgLayer.height()
         scale = min(scale_x, scale_y)
@@ -28,10 +35,13 @@ class ShowBoard(QLabel, ImgProcessor):
         y = int((self.height() - self.imgLayer.height()) / 2)
         self.imgLoc = (x, y)
 
+    def revealImg(self):
         painter = QPainter(self)
         painter.begin(self)
+
         x, y = self.imgLoc[:]
         painter.drawPixmap(x, y, self.imgLayer)
+
         painter.end()
 
     def waiting(self):
@@ -55,7 +65,9 @@ class ShowBoard(QLabel, ImgProcessor):
 
     def loadImg(self, img):
         self.orgImg = img
-        pixmap = self.opencv2Qimg(img)
+        self.orgPixmap = self.opencv2Qimg(img)
 
-        self.imgLayer = pixmap
+        self.imgLayer = self.orgPixmap.copy()
+
+        self.resizeImg()
         self.update()
