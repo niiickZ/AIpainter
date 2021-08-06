@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPainter
 import cv2
-from Board.ImgProcess import ImgProcess
+from .ImgProcessor import ImgProcessor
 
-class ShowBoard(QLabel, ImgProcess):
+class ShowBoard(QLabel, ImgProcessor):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -15,7 +15,7 @@ class ShowBoard(QLabel, ImgProcess):
         cv2.imwrite(fpath, img)
 
     def revealImg(self):
-        # if self.imgLayer.width() > self.width() or self.imgLayer.height() > self.height():
+        self.imgLayer = self.opencv2Qimg(self.orgImg)
         scale_x = (self.width() - 80) / self.imgLayer.width()
         scale_y = (self.height() - 80) / self.imgLayer.height()
         scale = min(scale_x, scale_y)
@@ -54,6 +54,7 @@ class ShowBoard(QLabel, ImgProcess):
             self.revealImg()
 
     def loadImg(self, img):
+        self.orgImg = img
         pixmap = self.opencv2Qimg(img)
 
         self.imgLayer = pixmap

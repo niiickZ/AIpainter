@@ -1,6 +1,6 @@
 from keras.models import Model
 from keras.layers import Dropout, Conv2D, UpSampling2D, LeakyReLU, Input, Concatenate
-from NeuralNet.NormalizationLayer import InstanceNormalization
+from .NormalizationLayer import InstanceNormalization
 import cv2
 import numpy as np
 

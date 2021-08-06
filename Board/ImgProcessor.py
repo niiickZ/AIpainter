@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from PyQt5.QtGui import QImage, QPixmap
 
-class ImgProcess:
+class ImgProcessor:
     def opencv2Qimg(self, img):
         """将opencv对象转换为QPixmap对象"""
         height, width, channel = img.shape

@@ -1,8 +1,7 @@
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import Qt, QPoint, QThread, QMutex
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
-import cv2
-from Board.ImgProcess import ImgProcess
+from .ImgProcessor import ImgProcessor
 import threading
 
 '''暂未完成的功能(1)
@@ -22,7 +21,7 @@ class ColorizeThread(QThread):
         self.mutex.unlock()
 '''
 
-class DrawingBoard(QLabel, ImgProcess):
+class DrawingBoard(QLabel, ImgProcessor):
     pen = 0
     eraser = 1
     def __init__(self, parent=None):
@@ -111,6 +110,10 @@ class DrawingBoard(QLabel, ImgProcess):
             return True
 
         # 图片适应画板大小
+        self.imgLayer = self.opencv2Qimg(self.orgImg)
+        self.paintLayer = self.paintLayer.scaled(
+            self.imgLayer.width(), self.imgLayer.height())
+
         scale_x = (self.width() - 80) / self.imgLayer.width()
         scale_y = (self.height() - 80) / self.imgLayer.height()
         scale = min(scale_x, scale_y)
