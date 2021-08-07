@@ -4,18 +4,22 @@ from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor
 from .ImgProcessor import ImgProcessor
 import threading
 
-'''暂未完成的功能(1)
+'''backup code 001: 子线程执行AI上色方案2——QThread
 class ColorizeThread(QThread):
-    def __init__(self, colSignal, img_sket, img_style):
+    def __init__(self, drawingBoard, img_sket, img_style):
         super().__init__()
         self.mutex = QMutex()
-        self.colSignal = colSignal
+        self.drawingBoard = drawingBoard
         self.img_sket = img_sket
         self.img_style = img_style
 
     def run(self):
         self.mutex.lock()
-        self.colSignal.emit(self.img_sket, self.img_style)
+
+        img_org = self.drawingBoard.orgImg.copy()
+        img_bgr = self.drawingBoard.colorizeAI.colorizeImage(self.img_sket, self.img_style, img_org)
+        self.drawingBoard.paintSignal.showSignal.emit(img_bgr)
+
         self.mutex.unlock()
 '''
 
@@ -44,7 +48,7 @@ class DrawingBoard(QLabel, ImgProcessor):
         self.using = self.pen
 
         # 信号传递器
-        self.paintComplete = None
+        self.paintSignal = None
 
     def mousePressEvent(self, QMouseEvent):
         if QMouseEvent.button() == Qt.LeftButton:
@@ -68,31 +72,25 @@ class DrawingBoard(QLabel, ImgProcessor):
     def resizeEvent(self, QResizeEvent):
         self.resizeImg()
 
+    def colorizeThread(self, img_bottom, img_style):
+        img_bgr = self.colorizeAI.colorizeImage(img_bottom, img_style, self.orgImg.copy())
+        self.paintSignal.showSignal.emit(img_bgr)
+
     def getColorScheme(self):
         """获取用户涂色后的图片并传递给上色AI"""
-
-        ''' 暂未完成的功能(2)
-        def colorizeThread(img_bottom, img_style):
-            self.paintComplete.colorizeSignal.emit(img_bottom, img_style)
-        '''
-
         img_bottom = self.Qimg2opencv(self.imgLayer) # 将QPixmap对象转化为opencv对象
         img_top = self.Qimg2opencv(self.paintLayer)
         img_style = self.coverImg(img_bottom.copy(), img_top.copy()) # 画板覆盖在原线稿上
 
-        ''' 暂未完成的功能(1)——AI上色时左侧画板可继续涂写(QThread)
-        self.colThread = ColorizeThread(
-            self.paintComplete.colorizeSignal,
-            img_bottom, img_style)
+        ''' backup code 001: 子线程执行AI上色方案2——QThread
+        self.colThread = ColorizeThread(self, img_bottom, img_style)
         self.colThread.start()
         '''
 
-        ''' 暂未完成的功能(2)——AI上色时左侧画板可继续涂写(threading)
-        threading.Thread(target=colorizeThread, args=(img_bottom, img_style), daemon=True).start()
-        '''
-
-        self.paintComplete.waitSignal.emit()
-        self.paintComplete.colorizeSignal.emit(img_bottom, img_style, self.orgImg.copy())
+        # 在子线程中执行AI上色，避免AI上色时ui界面假死
+        threading.Thread(target=self.colorizeThread,
+                         args=(img_bottom, img_style),
+                         daemon=True).start()
 
     def resizeImg(self):
         if self.imgLayer == None:

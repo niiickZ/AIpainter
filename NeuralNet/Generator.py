@@ -3,6 +3,7 @@ from keras.layers import Dropout, Conv2D, UpSampling2D, LeakyReLU, Input, Concat
 from .NormalizationLayer import InstanceNormalization
 import cv2
 import numpy as np
+import tensorflow as tf
 
 class Generator:
     def __init__(self):
@@ -60,6 +61,9 @@ class Sketch2BGR(Generator):
         self.generator = self.buildGenerator()
         self.generator.load_weights(modelPath)
 
+        '''notice tag 001: 子线程中执行predict需要添加该语句'''
+        self.graph = tf.get_default_graph()
+
     def preWork(self, img, orgShape, blur=False):
         """预处理图片为适应神经网络的格式"""
 
@@ -93,7 +97,10 @@ class Sketch2BGR(Generator):
         img_sket = self.preWork(img_sket, orgShape)
         img_style = self.preWork(img_style, orgShape, blur=True)
 
-        img_bgr = self.generator.predict([img_sket, img_style])[0]
+        '''notice tag 001: 子线程中执行predict需要添加该语句'''
+        with self.graph.as_default():
+            img_bgr = self.generator.predict([img_sket, img_style])[0]
+
         img_bgr = img_bgr * 127.5 + 127.5
         img_bgr = img_bgr.astype(np.uint8)
 

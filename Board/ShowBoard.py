@@ -44,19 +44,6 @@ class ShowBoard(QLabel, ImgProcessor):
 
         painter.end()
 
-    def waiting(self):
-        """等待AI上色时展板模糊效果"""
-        """暂未完成的功能(3)——不知道为啥不起作用，只能先注释掉了"""
-        pass
-        # img = self.Qimg2opencv(self.imgLayer)
-        #
-        # height, width = img.shape[:2]
-        # k_size = int(min(height, width) / 2)
-        # img = cv2.GaussianBlur(img, ksize=(k_size, k_size), sigmaX=15, sigmaY=15)
-        #
-        # self.imgLayer = self.opencv2Qimg(img)
-        # self.update()
-
     def paintEvent(self, QPaintEvent):
         super().paintEvent(QPaintEvent)
 

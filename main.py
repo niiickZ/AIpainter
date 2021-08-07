@@ -6,7 +6,6 @@ from Initializer import Initializer
 class MyWindow(QWidget, Ui_Home, Initializer):
     def __init__(self):
         super().__init__()
-        Initializer.__init__(self)
         self.setupUi(self)
         self.initialize(self)
 

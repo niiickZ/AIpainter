@@ -97,24 +97,14 @@ class Function:
         if fpath != '':
             self.showBoard.saveImg(fpath)
 
-    def waitMsg(self):
-        self.showBoard.waiting()
-
-    def colorize(self, img_sket, img_style, img_org):
-        """将原图和配色图传递给AI上色"""
-        img_bgr = self.colorizeAI.colorizeImage(img_sket, img_style, img_org)
-        self.showBoard.loadImg(img_bgr)
-
-class Signal(QObject):
-    waitSignal = pyqtSignal()
-    colorizeSignal = pyqtSignal(np.ndarray, np.ndarray, np.ndarray)
+class PaintSignal(QObject):
+    showSignal = pyqtSignal(np.ndarray)
 
 class Initializer(Function):
-    def __init__(self):
-        modelPath = os.path.join(os.getcwd(), "NeuralNet\\model\\weights.h5")
-        self.colorizeAI = Sketch2BGR(modelPath)
-
     def initialize(self, Home):
+        modelPath = os.path.join(os.getcwd(), "NeuralNet\\model\\weights.h5")
+        self.drawingBoard.colorizeAI = Sketch2BGR(modelPath)
+
         self.initWidget()
         self.eventBond(Home)
 
@@ -141,6 +131,5 @@ class Initializer(Function):
         self.uploadButton.clicked.connect(lambda: self.uploadImg(Home))
         self.downloadButton.clicked.connect(lambda: self.downloadImg(Home))
 
-        self.drawingBoard.paintComplete = Signal()
-        self.drawingBoard.paintComplete.waitSignal.connect(self.waitMsg)
-        self.drawingBoard.paintComplete.colorizeSignal.connect(self.colorize)
+        self.drawingBoard.paintSignal = PaintSignal()
+        self.drawingBoard.paintSignal.showSignal.connect(self.showBoard.loadImg)
