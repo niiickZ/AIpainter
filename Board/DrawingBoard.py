@@ -50,6 +50,8 @@ class DrawingBoard(QLabel, ImgProcessor):
         # 信号传递器
         self.paintSignal = None
 
+        self.threadLock = threading.Lock()
+
     def mousePressEvent(self, QMouseEvent):
         if QMouseEvent.button() == Qt.LeftButton:
             self.leftMousePress = True
@@ -73,8 +75,10 @@ class DrawingBoard(QLabel, ImgProcessor):
         self.resizeImg()
 
     def colorizeThread(self, img_bottom, img_style):
+        self.threadLock.acquire()
         img_bgr = self.colorizeAI.colorizeImage(img_bottom, img_style, self.orgImg.copy())
         self.paintSignal.showSignal.emit(img_bgr)
+        self.threadLock.release()
 
     def getColorScheme(self):
         """获取用户涂色后的图片并传递给上色AI"""
