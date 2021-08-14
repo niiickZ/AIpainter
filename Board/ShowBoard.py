@@ -3,7 +3,7 @@ from PyQt5.QtGui import QPainter
 import cv2
 from .ImgProcessor import ImgProcessor
 
-class ShowBoard(QLabel, ImgProcessor):
+class ShowBoard(QLabel):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -14,7 +14,7 @@ class ShowBoard(QLabel, ImgProcessor):
         self.resizeImg()
 
     def saveImg(self, fpath):
-        img = self.Qimg2opencv(self.imgLayer)
+        img = ImgProcessor.Qimg2opencv(self.imgLayer)
         cv2.imwrite(fpath, img)
 
     def resizeImg(self):
@@ -52,7 +52,7 @@ class ShowBoard(QLabel, ImgProcessor):
 
     def loadImg(self, img):
         self.orgImg = img.copy()
-        self.orgPixmap = self.opencv2Qimg(img.copy())
+        self.orgPixmap = ImgProcessor.opencv2Qimg(img.copy())
 
         self.imgLayer = self.orgPixmap.copy()
 

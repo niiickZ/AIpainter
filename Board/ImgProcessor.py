@@ -3,7 +3,8 @@ import numpy as np
 from PyQt5.QtGui import QImage, QPixmap
 
 class ImgProcessor:
-    def opencv2Qimg(self, img):
+    @staticmethod
+    def opencv2Qimg(img):
         """将opencv对象转换为QPixmap对象"""
         height, width, channel = img.shape
         bytesPerLine = 3 * width
@@ -13,7 +14,8 @@ class ImgProcessor:
         pixmap = QPixmap.fromImage(QImg)
         return pixmap
 
-    def Qimg2opencv(self, pixmap):
+    @staticmethod
+    def Qimg2opencv(pixmap):
         """将QPixmap对象转换为opencv对象"""
         # 复制的玄学代码
         Qimg = pixmap.toImage()
@@ -24,7 +26,8 @@ class ImgProcessor:
         result = np.array(ptr, dtype=np.uint8).reshape(temp_shape)
         return result[..., :3]
 
-    def coverImg(self, img_bottom, img_top):
+    @staticmethod
+    def coverImg(img_bottom, img_top):
         """将img_top覆盖在img_bottom上"""
         # 创建掩膜
         img_gray = cv2.cvtColor(img_top, cv2.COLOR_BGR2GRAY)

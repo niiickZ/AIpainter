@@ -23,7 +23,7 @@ class ColorizeThread(QThread):
         self.mutex.unlock()
 '''
 
-class DrawingBoard(QLabel, ImgProcessor):
+class DrawingBoard(QLabel):
     pen = 0
     eraser = 1
     def __init__(self, parent=None):
@@ -82,9 +82,9 @@ class DrawingBoard(QLabel, ImgProcessor):
 
     def getColorScheme(self):
         """获取用户涂色后的图片并传递给上色AI"""
-        img_bottom = self.Qimg2opencv(self.imgLayer) # 将QPixmap对象转化为opencv对象
-        img_top = self.Qimg2opencv(self.paintLayer)
-        img_style = self.coverImg(img_bottom.copy(), img_top.copy()) # 画板覆盖在原线稿上
+        img_bottom = ImgProcessor.Qimg2opencv(self.imgLayer) # 将QPixmap对象转化为opencv对象
+        img_top = ImgProcessor.Qimg2opencv(self.paintLayer)
+        img_style = ImgProcessor.coverImg(img_bottom.copy(), img_top.copy()) # 画板覆盖在原线稿上
 
         ''' backup code 001: 子线程执行AI上色方案2——QThread
         self.colThread = ColorizeThread(self, img_bottom, img_style)
@@ -168,7 +168,7 @@ class DrawingBoard(QLabel, ImgProcessor):
 
     def loadImg(self, img):
         self.orgImg = img.copy()
-        self.orgPixmap = self.opencv2Qimg(img.copy())
+        self.orgPixmap = ImgProcessor.opencv2Qimg(img.copy())
 
         self.imgLayer = self.orgPixmap.copy()
 
