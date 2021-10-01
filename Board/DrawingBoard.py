@@ -107,6 +107,7 @@ class DrawingBoard(QLabel):
         scale_x = (self.width() - 80) / self.imgLayer.width()
         scale_y = (self.height() - 80) / self.imgLayer.height()
         scale = min(scale_x, scale_y)
+        scale = min(scale, 2.2)
 
         size = self.imgLayer.size()
         self.imgLayer = self.imgLayer.scaled(scale * size)
