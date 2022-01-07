@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import Dropout, Conv2D, UpSampling2D, LeakyReLU, Input, Concatenate
+from keras.layers import Dropout, Conv2D, UpSampling2D, LeakyReLU, Input, Concatenate, Activation
 from .NormalizationLayer import InstanceNormalization
 import cv2
 import numpy as np
@@ -13,21 +13,22 @@ class Generator:
         self.img_shape = (self.img_row, self.img_col, self.img_channels)
 
     def buildGenerator(self):
-        def EnConv2D(lastLayer, filters, k_size=4, norm=True):
-            layer = Conv2D(filters, kernel_size=k_size, strides=2, padding='same')(lastLayer)
-            layer = LeakyReLU(alpha=0.2)(layer)
+        def EnConv2D(inputs, filters, k_size=4, norm=True):
+            x = Conv2D(filters, kernel_size=k_size, strides=2, padding='same')(inputs)
             if norm:
-                layer = InstanceNormalization()(layer)
-            return layer
+                x = InstanceNormalization()(x)
+            x = LeakyReLU(alpha=0.2)(x)
+            return x
 
-        def DeConv2D(lastLayer, skipLayer, filters, k_size=4, drop_rate=0.0):
-            layer = UpSampling2D()(lastLayer)
-            layer = Conv2D(filters, kernel_size=k_size, padding='same', activation='relu')(layer)
+        def DeConv2D(inputs, skipInputs, filters, k_size=4, drop_rate=0.0):
+            x = UpSampling2D()(inputs)
+            x = Conv2D(filters, kernel_size=k_size, padding='same')(x)
+            x = InstanceNormalization()(x)
+            x = Activation('relu')(x)
+            outputs = Concatenate()([x, skipInputs])
             if drop_rate:
-                layer = Dropout(drop_rate)(layer)
-            layer = InstanceNormalization()(layer)
-            layer = Concatenate()([layer, skipLayer])
-            return layer
+                outputs = Dropout(drop_rate)(outputs)
+            return outputs
 
         img_sket = Input(shape=self.img_shape)
         img_style = Input(shape=self.img_shape)
@@ -50,9 +51,9 @@ class Generator:
         decoder6 = DeConv2D(decoder5, encoder1, 64)
 
         decoder7 = UpSampling2D()(decoder6)
-        outputLayer = Conv2D(filters=self.img_channels, kernel_size=4, padding='same', activation='tanh')(decoder7)
+        img_output = Conv2D(filters=self.img_channels, kernel_size=4, padding='same', activation='tanh')(decoder7)
 
-        return Model([img_sket, img_style], outputLayer)
+        return Model([img_sket, img_style], img_output)
 
 
 class Sketch2BGR(Generator):
